@@ -1,7 +1,8 @@
 "use strict";
-// Get DOM elements
+
+// Elements
 const pass = document.getElementById("password");
-const toggBtn = document.getElementById("toggleBtn");
+const togBtn = document.getElementById("toggleBtn");
 const message = document.getElementById("message");
 
 const ruleLen = document.getElementById("ruleLen");
@@ -9,48 +10,93 @@ const ruleUpper = document.getElementById("ruleUpper");
 const ruleNum = document.getElementById("ruleNum");
 const ruleSpec = document.getElementById("ruleSpec");
 
-// Toggle password visibility
-toggBtn.addEventListener("click", () => {
-  if (pass.type === "password") {
-    pass.type = "text";
-    toggBtn.textContent = "Hide";
-  } else {
-    pass.type = "password";
-    toggBtn.textContent = "Show";
-  }
+const bar = document.getElementById("bar");
+const strengthText = document.getElementById("strengthText");
+
+// Helper
+const showMessage = (text, isError = false) => {
+  message.textContent = text;
+  message.classList.toggle("error", isError);
+};
+
+// Show/Hide password
+togBtn.addEventListener("click", () => {
+  const isHidden = pass.type === "password";
+  pass.type = isHidden ? "text" : "password";
+  togBtn.textContent = isHidden ? "Hide" : "Show";
 });
 
-// Function to check password rules
+// Main logic
 const checkRules = (password) => {
-  // Rule 1: Minimum length of 8 characters
-  if (password.length >= 8) {
-    ruleLen.classList.add("ok");
-  } else {
+  // If empty, reset UI
+  if (!password) {
     ruleLen.classList.remove("ok");
-  }
-
-  // Rule 2: At least one uppercase letter
-  if (/[A-Z]/.test(password)) {
-    ruleUpper.classList.add("ok");
-  } else {
     ruleUpper.classList.remove("ok");
-  }
-
-  // Rule 3: At least one number
-  if (/[0-9]/.test(password)) {
-    ruleNum.classList.add("ok");
-  } else {
     ruleNum.classList.remove("ok");
+    ruleSpec.classList.remove("ok");
+
+    bar.style.width = "0%";
+    bar.style.backgroundColor = "transparent";
+    strengthText.textContent = "—";
+    showMessage("", false);
+    return;
   }
 
-  // Rule 4: At least one special character
-  if (/[^A-Za-z0-9]/.test(password)) {
-    ruleSpec.classList.add("ok");
+  // Rule booleans
+  const hasLen = password.length >= 8;
+  const hasUpper = /[A-Z]/.test(password);
+  const hasNum = /[0-9]/.test(password);
+  const hasSpec = /[^A-Za-z0-9]/.test(password);
+
+  // Update rule UI
+  ruleLen.classList.toggle("ok", hasLen);
+  ruleUpper.classList.toggle("ok", hasUpper);
+  ruleNum.classList.toggle("ok", hasNum);
+  ruleSpec.classList.toggle("ok", hasSpec);
+
+  // Strength score 0–4
+  const strength =
+    (hasLen ? 1 : 0) +
+    (hasUpper ? 1 : 0) +
+    (hasNum ? 1 : 0) +
+    (hasSpec ? 1 : 0);
+
+  // Update meter
+  const percent = (strength / 4) * 100;
+  bar.style.width = `${percent}%`;
+
+  // Strength text + color
+  if (strength === 1) {
+    bar.style.backgroundColor = "red";
+    strengthText.textContent = "Very Weak";
+    showMessage(
+      "Try adding more rules (8+ chars, uppercase, number, special).",
+      true
+    );
+  } else if (strength === 2) {
+    bar.style.backgroundColor = "orange";
+    strengthText.textContent = "Weak";
+    showMessage("Not bad — add 1–2 more rules to improve it.", false);
+  } else if (strength === 3) {
+    bar.style.backgroundColor = "yellow";
+    strengthText.textContent = "Good";
+    showMessage("Good! Add one more rule for a strong password.", false);
+  } else if (strength === 4) {
+    bar.style.backgroundColor = "green";
+    strengthText.textContent = "Strong";
+    showMessage("Strong password ✅", false);
   } else {
-    ruleSpec.classList.remove("ok");
+    // strength === 0 (should only happen if password exists but matches none)
+    bar.style.backgroundColor = "transparent";
+    strengthText.textContent = "—";
+    showMessage("", false);
   }
 };
 
+// Run on typing
 pass.addEventListener("input", () => {
   checkRules(pass.value);
 });
+
+// Optional: initialize UI on load
+checkRules(pass.value);
