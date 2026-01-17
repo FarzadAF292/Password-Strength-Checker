@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Password Strength Checker</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <main class="app">
+        <h1>Password Strength</h1>
+        <p class="subtitle">Type a password to see how strong it is.</p>
+
+        <section class="card">
+            <label class="label" for="password">Password</label>
+
+            <div class="input-row">
+                <input id="password" type="password" placeholder="Enter password..." />
+                <button id="toggleBtn" class="btn secondary" type="button">Show</button>
+            </div>
+
+            <div class="meter">
+                <div id="bar" class="bar"></div>
+            </div>
+
+            <p class="strength">
+                Strength: <span id="strengthText">—</span>
+            </p>
+
+            <ul class="rules">
+                <li id="ruleLen">At least 8 characters</li>
+                <li id="ruleUpper">At least 1 uppercase letter</li>
+                <li id="ruleNum">At least 1 number</li>
+                <li id="ruleSpec">At least 1 special character (!@#$...)</li>
+            </ul>
+
+            <p id="message" class="message"></p>
+        </section>
+
+        <footer class="footer">
+            <p>Made by <span class="author">Farzad Afzalli</span></p>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
