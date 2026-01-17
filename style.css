@@ -47,6 +47,14 @@ h1 {
   min-width: 0;
 }
 
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto 12px auto;
+}
+
 .label {
   color: #94a3b8;
   font-size: 14px;
