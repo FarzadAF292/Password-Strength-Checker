@@ -26,6 +26,12 @@ togBtn.addEventListener("click", () => {
   togBtn.textContent = isHidden ? "Hide" : "Show";
 });
 
+pass.addEventListener("keydown", (e) => {
+  if (e.getModifierState("CapsLock")) {
+    showMessage("Caps Lock is ON", true);
+  }
+});
+
 // Main logic
 const checkRules = (password) => {
   // If empty, reset UI
